@@ -8,6 +8,7 @@
 
 
 #change to our current user desktop
+[System.Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12
 $DesktopPath = [Environment]::GetFolderPath("Desktop")
 cd $DesktopPath
 
