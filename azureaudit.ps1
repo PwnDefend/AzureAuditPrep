@@ -83,12 +83,25 @@ else {
     }
 }
 
-#this is the actual module required for the audit tool but you likely will want both for more audit foo
 if ($PSVersionTable.PSEdition -eq 'Desktop' -and (Get-Module -Name AzureRM -ListAvailable)) {
     Write-Warning -Message ('Az module not installed. Having both the AzureRM and ' +
         'Az modules installed at the same time is not supported.')
 } 
 else {
+    Try {   
+        if (get-Module -ListAvailable -Name Az ) {
+            write-host "AzureAD module is already installed" -ForegroundColor Green
+        }
+        else {        
+            Install-Module -Name Az -Scope AllUsers -Verbose -AllowClobber
+        }  
+    }
+    Catch {    
+        write-host "Unable to install Az Module" -ForegroundColor Red
+        write-host "Error was $_" -ForegroundColor Red
+        break
+    }
+    #this is the actual module required for the audit tool but you likely will want both for more audit foo
     Try {   
         if (get-Module -ListAvailable -Name AzureAD ) {
             write-host "AzureAD module is already installed" -ForegroundColor Green
@@ -104,10 +117,10 @@ else {
     }
 }
 
-    # Manual Test if required uncomment
-    # Connect to Azure with a browser sign in token
-    #Connect-AzAccount
-    #Connect-ExchangeOnline -UserPrincipalName user@domainname.example
+# Manual Test if required uncomment
+# Connect to Azure with a browser sign in token
+#Connect-AzAccount
+#Connect-ExchangeOnline -UserPrincipalName user@domainname.example
 
 Invoke-WebRequest -Uri "https://raw.githubusercontent.com/CrowdStrike/CRT/main/Get-CRTReport.ps1" -OutFile "Get-CRTReport.ps1"
 Unblock-File Get-CRTReport.ps1
